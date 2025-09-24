@@ -1,4 +1,4 @@
-﻿# 🎪 EventManagement API
+﻿# 🎪 Gestor de Eventos API
 
 ### Sistema Integral de Gestión de Eventos con Chat en Tiempo Real
 
@@ -12,7 +12,7 @@
 
 ## 📋 Descripción
 
-**EventManagement API** es una plataforma completa para la gestión de eventos que incluye autenticación robusta, sistema de roles, registro a eventos y chat en tiempo real. Construida con las mejores prácticas de desarrollo y arquitectura escalable.
+**Gestor de Eventos API** es una plataforma completa para la gestión de eventos que incluye autenticación robusta, sistema de roles, registro a eventos y chat en tiempo real. Construida con las mejores prácticas de desarrollo y arquitectura escalable.
 
 ### ✨ Características Principales
 
