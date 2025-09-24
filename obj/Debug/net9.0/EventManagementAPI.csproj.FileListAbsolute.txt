@@ -154,5 +154,5 @@ E:\Proyectos\EventManagementAPI\EventManagementAPI\bin\Debug\net9.0\FluentValida
 E:\Proyectos\EventManagementAPI\EventManagementAPI\bin\Debug\net9.0\FluentValidation.AspNetCore.dll
 E:\Proyectos\EventManagementAPI\EventManagementAPI\bin\Debug\net9.0\FluentValidation.DependencyInjectionExtensions.dll
 E:\Proyectos\EventManagementAPI\EventManagementAPI\bin\Debug\net9.0\Swashbuckle.AspNetCore.Annotations.dll
-E:\Proyectos\EventManagementAPI\EventManagementAPI\obj\Debug\net9.0\compressed\qgqa4kho3b-oq5lhf5oky.gz
-E:\Proyectos\EventManagementAPI\EventManagementAPI\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt
+E:\Proyectos\EventManagementAPI\EventManagementAPI\obj\Debug\net9.0\EventManagementAPI.sourcelink.json
+E:\Proyectos\EventManagementAPI\EventManagementAPI\obj\Debug\net9.0\compressed\qgqa4kho3b-0542lfdyse.gz

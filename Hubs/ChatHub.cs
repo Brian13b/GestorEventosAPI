@@ -83,7 +83,7 @@ namespace EventManagementAPI.Hubs
                 await Groups.RemoveFromGroupAsync(Context.ConnectionId, groupName);
 
                 // Remover de usuarios escribiendo si estaba escribiendo
-                StopTyping(eventId);
+                await StopTyping(eventId);
 
                 // Notificar a otros usuarios
                 await Clients.Group(groupName).SendAsync("UserLeft", new
@@ -257,7 +257,7 @@ namespace EventManagementAPI.Hubs
             await base.OnConnectedAsync();
         }
 
-        public override async Task OnDisconnectedAsync(Exception exception)
+        public override async Task OnDisconnectedAsync(Exception? exception)
         {
             try
             {

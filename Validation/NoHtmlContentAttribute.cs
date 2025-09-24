@@ -10,7 +10,7 @@ namespace EventManagementAPI.Validation
             ErrorMessage = "El contenido no puede contener código HTML";
         }
 
-        public override bool IsValid(object value)
+        public override bool IsValid(object? value)
         {
             if (value is not string content)
                 return true;

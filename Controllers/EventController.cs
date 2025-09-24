@@ -29,6 +29,7 @@ namespace EventManagementAPI.Controllers
             return User.FindFirst(ClaimTypes.Role)?.Value ?? "";
         }
 
+        // Obtener todos los eventos con filtros opcionales
         [HttpGet]
         public async Task<IActionResult> GetAllEvents([FromQuery] EventFilterDto filter)
         {
@@ -44,6 +45,7 @@ namespace EventManagementAPI.Controllers
             }
         }
 
+        // Obtener evento especifico por ID
         [HttpGet("{id}")]
         public async Task<IActionResult> GetEventById(int id)
         {
@@ -63,6 +65,7 @@ namespace EventManagementAPI.Controllers
             }
         }
 
+        // Crear un nuevo evento
         [HttpPost]
         [Authorize(Roles = "Admin,Organizador")]
         public async Task<IActionResult> CreateEvent([FromBody] CreateEventDtoEnhanced createEventDto)
@@ -96,6 +99,7 @@ namespace EventManagementAPI.Controllers
             }
         }
 
+        // Actualizar un evento existente
         [HttpPut("{id}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateEvent(int id, [FromBody] UpdateEventDtoEnhanced updateEventDto)
@@ -132,6 +136,7 @@ namespace EventManagementAPI.Controllers
             }
         }
 
+        // Eliminar un evento
         [HttpDelete("{id}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteEvent(int id)
@@ -156,6 +161,7 @@ namespace EventManagementAPI.Controllers
             }
         }
 
+        // Registrar al usuario actual en un evento
         [HttpPost("{id}/register")]
         public async Task<IActionResult> RegisterToEvent(int id)
         {
@@ -179,6 +185,7 @@ namespace EventManagementAPI.Controllers
             }
         }
 
+        // Cancelar registro del usuario actual en un evento
         [HttpDelete("{id}/register")]
         public async Task<IActionResult> UnregisterFromEvent(int id)
         {
@@ -195,6 +202,118 @@ namespace EventManagementAPI.Controllers
             catch (InvalidOperationException ex)
             {
                 return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Error interno del servidor", details = ex.Message });
+            }
+        }
+
+        // Obtener todos los registros para un evento (solo para Admin y Organizador)
+        [HttpGet("{id}/registrations")]
+        [Authorize(Roles = "Admin,Organizador")]
+        public async Task<IActionResult> GetEventRegistrations(int id)
+        {
+            try
+            {
+                var userId = GetCurrentUserId();
+                var registrations = await _eventService.GetEventRegistrationsAsync(id, userId);
+                return Ok(new { message = "Registros obtenidos exitosamente", data = registrations });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Forbid(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Error interno del servidor", details = ex.Message });
+            }
+        }
+
+        // Otros endpoints relacionados con eventos (Solo Admin y Organizador)
+
+        // Obtener usuarios registrados para un evento
+        [HttpGet("{id}/available-users")]
+        [Authorize(Roles = "Admin,Organizador")]
+        public async Task<IActionResult> GetAvailableUsersForEvent(int id)
+        {
+            try
+            {
+                var userId = GetCurrentUserId();
+                await _eventService.GetAvailableUsersForEventAsync(id, userId);
+                return Ok(new { message = "Usuarios obtenidos exitosamente" });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Forbid(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Error interno del servidor", details = ex.Message });
+            }
+        }
+
+        // Agregar usuario a un evento
+        [HttpPost("{id}/admin-register/{userId}")]
+        [Authorize(Roles = "Admin,Organizador")]
+        public async Task<IActionResult> AdminRegisterUserToEvent(int id, int userId)
+        {
+            try
+            {
+                var adminId = GetCurrentUserId();
+                await _eventService.AdminRegisterUserToEventAsync(id, userId, adminId);
+                return Ok(new { message = "Usuario registrado exitosamente al evento" });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Forbid(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Error interno del servidor", details = ex.Message });
+            }
+        }
+
+        // Remover usuario de un evento
+        [HttpDelete("{id}/admin-register/{userId}")]
+        [Authorize(Roles = "Admin,Organizador")]
+        public async Task<IActionResult> AdminUnregisterUserFromEvent(int id, int userId)
+        {
+            try
+            {
+                var adminId = GetCurrentUserId();
+                var unregistered = await _eventService.AdminUnregisterUserFromEventAsync(id, userId, adminId);
+                if (!unregistered)
+                    return BadRequest(new { message = "El usuario no está registrado en este evento" });
+                return Ok(new { message = "Usuario removido exitosamente del evento" });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Forbid(ex.Message);
             }
             catch (Exception ex)
             {

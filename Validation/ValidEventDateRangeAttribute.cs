@@ -12,7 +12,7 @@ namespace EventManagementAPI.Validation
             ErrorMessage = $"La fecha del evento debe estar entre ahora y {maxMonthsInFuture} meses en el futuro";
         }
 
-        public override bool IsValid(object value)
+        public override bool IsValid(object? value)
         {
             if (value is not DateTime eventDate)
                 return true;

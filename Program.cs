@@ -67,6 +67,7 @@ builder.Services.AddAuthorization();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IEventService, EventService>();
 builder.Services.AddScoped<IChatService, ChatService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 // Configuración de cache en memoria para rate limiting
 builder.Services.AddMemoryCache();
@@ -135,8 +136,7 @@ Esta API proporciona funcionalidades completas para:
         ",
         Contact = new OpenApiContact
         {
-            Name = "EventManagement API",
-            Email = "support@eventmanagement.com"
+            Name = "EventManagement API"
         }
     });
 
@@ -196,20 +196,8 @@ builder.Services.AddCors(options =>
                 "https://localhost:3000",   // React HTTPS
                 "http://localhost:5173",    // Vite default
                 "https://localhost:5173",   // Vite HTTPS
-                "http://localhost:4200",    // Angular default
-                "https://localhost:4200",    // Angular HTTPS
                 "http://localhost:5135"    // Swagger UI
             )
-            .AllowAnyMethod()
-            .AllowAnyHeader()
-            .AllowCredentials(); // Importante para SignalR
-    });
-
-    // Política específica para producción
-    options.AddPolicy("Production", corsBuilder =>
-    {
-        corsBuilder
-            .WithOrigins("https://your-production-domain.com", "http://localhost:3000")
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials();
@@ -258,8 +246,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "EventManagement API V1");
-        c.RoutePrefix = string.Empty; // Swagger en la raíz
-        c.DefaultModelsExpandDepth(-1); // Colapsar modelos por defecto
+        c.RoutePrefix = string.Empty; 
+        c.DefaultModelsExpandDepth(-1); 
         c.DocExpansion(Swashbuckle.AspNetCore.SwaggerUI.DocExpansion.None);
         c.EnableDeepLinking();
         c.EnableFilter();
@@ -282,16 +270,12 @@ else
 // Middleware personalizado de validación y manejo de errores
 app.UseMiddleware<ValidationMiddleware>();
 
-// Pipeline estándar
-//app.UseHttpsRedirection();
-
-// CORS debe ir antes de Authentication
+// CORS
 app.UseCors();
 
-// Rate limiting global (opcional)
+// Rate limiting global
 if (app.Environment.IsProduction())
 {
-    // En producción, aplicar rate limiting más estricto
     app.UseMiddleware<GlobalRateLimitMiddleware>();
 }
 
@@ -358,7 +342,7 @@ using (var scope = app.Services.CreateScope())
             {
                 Title = "Evento de Prueba del Sistema",
                 Description = "Este es un evento de prueba para demostrar las funcionalidades del chat y registro.",
-                Date = DateTime.UtcNow.AddDays(7), // Una semana desde ahora
+                Date = DateTime.UtcNow.AddDays(7),
             };
 
             context.Events.Add(testEvent);
@@ -419,8 +403,6 @@ public class GlobalRateLimitMiddleware
 
     public async Task InvokeAsync(HttpContext context)
     {
-        // Implementar lógica de rate limiting global si es necesario
-        // Por ahora, solo pasa al siguiente middleware
         await _next(context);
     }
 }

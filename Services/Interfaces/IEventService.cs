@@ -12,9 +12,8 @@ namespace EventManagementAPI.Services.Interfaces
         Task<bool> RegisterToEventAsync(int eventId, int userId);
         Task<bool> UnregisterFromEventAsync(int eventId, int userId);
         Task<IEnumerable<RegistrationDto>> GetEventRegistrationsAsync(int eventId, int userId);
-        Task GetEventRegistrationsAsync(int id);
-        Task RegisterUserToEventAsync(int eventId, int userId);
-        Task UnregisterUserFromEventAsync(int eventId, int userId);
-        Task GetUsersNotRegisteredInEventAsync(int eventId);
+        Task<bool> AdminUnregisterUserFromEventAsync(int id, int userId, int adminId);
+        Task AdminRegisterUserToEventAsync(int id, int userId, int adminId);
+        Task GetAvailableUsersForEventAsync(int id, int userId);
     }
 }

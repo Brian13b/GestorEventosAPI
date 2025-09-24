@@ -9,7 +9,7 @@ namespace EventManagementAPI.Validation
             ErrorMessage = "El GUID no puede estar vacío";
         }
 
-        public override bool IsValid(object value)
+        public override bool IsValid(object? value)
         {
             if (value is Guid guid)
             {

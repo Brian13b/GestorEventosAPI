@@ -11,7 +11,7 @@ namespace EventManagementAPI.Validation
             ErrorMessage = "Ya existe un usuario con este email";
         }
 
-        protected override ValidationResult IsValid(object value, ValidationContext validationContext)
+        protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
         {
             if (value is not string email)
                 return ValidationResult.Success;

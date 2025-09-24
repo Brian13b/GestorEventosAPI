@@ -10,7 +10,7 @@ namespace EventManagementAPI.Validation
             ErrorMessage = "La contraseña debe tener al menos 8 caracteres, incluir mayúsculas, minúsculas y números";
         }
 
-        public override bool IsValid(object value)
+        public override bool IsValid(object? value)
         {
             if (value is not string password)
                 return false;

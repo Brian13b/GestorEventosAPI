@@ -9,7 +9,7 @@ namespace EventManagementAPI.Validation
             ErrorMessage = "La fecha debe ser futura";
         }
 
-        public override bool IsValid(object value)
+        public override bool IsValid(object? value)
         {
             if (value is DateTime dateTime)
             {

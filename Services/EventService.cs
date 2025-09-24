@@ -15,6 +15,7 @@ namespace EventManagementAPI.Services
             _context = context;
         }
 
+        // Obtener todos los eventos
         public async Task<IEnumerable<EventDto>> GetAllEventsAsync(int userId)
         {
             var events = await _context.Events
@@ -34,6 +35,7 @@ namespace EventManagementAPI.Services
             return events;
         }
 
+        // Obtener evento por ID con detalles
         public async Task<EventDetailDto> GetEventByIdAsync(int eventId, int userId)
         {
             var eventEntity = await _context.Events
@@ -63,6 +65,7 @@ namespace EventManagementAPI.Services
             };
         }
 
+        // Crear un nuevo evento
         public async Task<EventDto> CreateEventAsync(CreateEventDto createEventDto, int organizerId)
         {
             // Verificar que el usuario es organizador o admin
@@ -101,6 +104,7 @@ namespace EventManagementAPI.Services
             };
         }
 
+        // Actualizar un evento existente
         public async Task<EventDto> UpdateEventAsync(int eventId, UpdateEventDto updateEventDto, int userId)
         {
             var eventEntity = await _context.Events.FindAsync(eventId);
@@ -142,6 +146,7 @@ namespace EventManagementAPI.Services
             };
         }
 
+        // Eliminar un evento
         public async Task<bool> DeleteEventAsync(int eventId, int userId)
         {
             var eventEntity = await _context.Events.FindAsync(eventId);
@@ -158,15 +163,15 @@ namespace EventManagementAPI.Services
             return true;
         }
 
+        // Registrar usuario a un evento
         public async Task<bool> RegisterToEventAsync(int eventId, int userId)
         {
             // Verificar que el evento existe
-            var eventExists = await _context.Events.AnyAsync(e => e.Id == eventId);
-            if (!eventExists)
+            var eventEntity = await _context.Events.FindAsync(eventId);
+            if (eventEntity == null)
                 throw new KeyNotFoundException("Evento no encontrado");
 
             // Verificar que el evento no haya pasado
-            var eventEntity = await _context.Events.FindAsync(eventId);
             if (eventEntity.Date <= DateTime.UtcNow)
                 throw new InvalidOperationException("No se puede registrar a un evento que ya pasó");
 
@@ -190,6 +195,7 @@ namespace EventManagementAPI.Services
             return true;
         }
 
+        // Cancelar registro de un usuario en un evento
         public async Task<bool> UnregisterFromEventAsync(int eventId, int userId)
         {
             var registration = await _context.Registrations
@@ -198,8 +204,11 @@ namespace EventManagementAPI.Services
             if (registration == null)
                 return false;
 
-            // Verificar que el evento no haya pasado
+            // Verificar que el evento existe antes de acceder a la fecha
             var eventEntity = await _context.Events.FindAsync(eventId);
+            if (eventEntity == null)
+                throw new KeyNotFoundException("Evento no encontrado");
+
             if (eventEntity.Date <= DateTime.UtcNow)
                 throw new InvalidOperationException("No se puede cancelar registro de un evento que ya pasó");
 
@@ -208,6 +217,7 @@ namespace EventManagementAPI.Services
             return true;
         }
 
+        // Obtener todas las inscripciones de un evento (solo admin)
         public async Task<IEnumerable<RegistrationDto>> GetEventRegistrationsAsync(int eventId, int userId)
         {
             // Verificar permisos (solo admin puede ver todas las inscripciones)
@@ -232,6 +242,74 @@ namespace EventManagementAPI.Services
                 .ToListAsync();
 
             return registrations;
+        }
+
+        // Métodos adicionales para funcionalidades avanzadas
+
+        // Desregistrar usuario de un evento (admin)
+        public async Task<bool> AdminUnregisterUserFromEventAsync(int id, int userId, int adminId)
+        {
+            var registration = await _context.Registrations
+                .FirstOrDefaultAsync(r => r.EventId == id && r.UserId == userId);
+            if (registration == null)
+                return false;
+            // Verificar permisos (solo admin puede desregistrar usuarios)
+            var adminUser = await _context.Users.Include(u => u.Role).FirstAsync(u => u.Id == adminId);
+            if (adminUser.Role.Name != "Admin")
+                throw new UnauthorizedAccessException("Solo administradores pueden desregistrar usuarios");
+            _context.Registrations.Remove(registration);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        // Registrar usuario a un evento (admin)
+        public async Task AdminRegisterUserToEventAsync(int id, int userId, int adminId)
+        {
+            // Verificar que el evento existe
+            var eventExists = await _context.Events.AnyAsync(e => e.Id == id);
+            if (!eventExists)
+                throw new KeyNotFoundException("Evento no encontrado");
+            // Verificar permisos (solo admin puede registrar usuarios)
+            var adminUser = await _context.Users.Include(u => u.Role).FirstAsync(u => u.Id == adminId);
+            if (adminUser.Role.Name != "Admin")
+                throw new UnauthorizedAccessException("Solo administradores pueden registrar usuarios");
+            // Verificar si ya está registrado
+            var existingRegistration = await _context.Registrations
+                .FirstOrDefaultAsync(r => r.EventId == id && r.UserId == userId);
+            if (existingRegistration != null)
+                throw new InvalidOperationException("El usuario ya está registrado en este evento");
+            // Crear registro
+            var registration = new Registration
+            {
+                EventId = id,
+                UserId = userId,
+                RegisteredAt = DateTime.UtcNow
+            };
+            _context.Registrations.Add(registration);
+            await _context.SaveChangesAsync();
+        }
+
+        // Obtener usuarios disponibles para registrar en un evento (admin)
+        public async Task GetAvailableUsersForEventAsync(int id, int userId)
+        {
+            // Verificar permisos (solo admin puede ver usuarios disponibles)
+            var user = await _context.Users.Include(u => u.Role).FirstAsync(u => u.Id == userId);
+            if (user.Role.Name != "Admin")
+                throw new UnauthorizedAccessException("Solo administradores pueden ver los usuarios disponibles");
+            var registeredUserIds = await _context.Registrations
+                .Where(r => r.EventId == id)
+                .Select(r => r.UserId)
+                .ToListAsync();
+            var availableUsers = await _context.Users
+                .Where(u => !registeredUserIds.Contains(u.Id))
+                .Select(u => new UserDto
+                {
+                    Id = u.Id,
+                    Username = u.Username,
+                    Email = u.Email,
+                    Role = u.Role.Name
+                })
+                .ToListAsync();
         }
     }
 }
