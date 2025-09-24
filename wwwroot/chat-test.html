@@ -1,0 +1,1140 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EventManagement - Test Completo</title>
+    
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎪 EventManagement System</h1>
+            <p>Plataforma completa de gestión de eventos con chat en tiempo real</p>
+            <div id="userInfo" style="margin-top: 15px; font-size: 0.9em; opacity: 0.9;"></div>
+        </div>
+
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="showTab('auth')">🔐 Autenticación</button>
+            <button class="nav-tab" onclick="showTab('events')">🎉 Eventos</button>
+            <button class="nav-tab" onclick="showTab('chat')">💬 Chat</button>
+            <button class="nav-tab" onclick="showTab('users')">👥 Usuarios</button>
+            <button class="nav-tab" onclick="showTab('admin')">⚙️ Admin</button>
+        </div>
+
+        <!-- Tab de Autenticación -->
+        <div id="authTab" class="tab-content active">
+            <div class="section">
+                <h3>🔐 Iniciar Sesión</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Email:</label>
+                        <input type="email" id="loginEmail" placeholder="usuario@example.com" value="admin@test.com">
+                    </div>
+                    <div class="form-group">
+                        <label>Contraseña:</label>
+                        <input type="password" id="loginPassword" placeholder="password" value="Admin123!">
+                    </div>
+                </div>
+                <button class="btn btn-primary" onclick="login()">Iniciar Sesión</button>
+                <button class="btn btn-secondary" onclick="logout()">Cerrar Sesión</button>
+            </div>
+
+            <div class="section">
+                <h3>📝 Registrarse</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Nombre de usuario:</label>
+                        <input type="text" id="regUsername" placeholder="mi_usuario">
+                    </div>
+                    <div class="form-group">
+                        <label>Email:</label>
+                        <input type="email" id="regEmail" placeholder="nuevo@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label>Contraseña:</label>
+                        <input type="password" id="regPassword" placeholder="Minimo8Chars1!">
+                    </div>
+                    <div class="form-group">
+                        <label>Confirmar contraseña:</label>
+                        <input type="password" id="regConfirmPassword" placeholder="Minimo8Chars1!">
+                    </div>
+                </div>
+                <button class="btn btn-success" onclick="register()">Registrarse</button>
+            </div>
+
+            <div id="authStatus" class="status info" style="display: none;"></div>
+        </div>
+
+        <!-- Tab de Eventos -->
+        <div id="eventsTab" class="tab-content">
+            <div class="section">
+                <h3>🎉 Gestión de Eventos</h3>
+
+                <!-- Filtros -->
+                <div class="filters">
+                    <div class="filter-group">
+                        <label>Buscar:</label>
+                        <input type="text" id="eventSearch" placeholder="Título del evento...">
+                    </div>
+                    <div class="filter-group">
+                        <label>Categoría:</label>
+                        <select id="eventCategory">
+                            <option value="">Todas</option>
+                            <option value="Conferencia">Conferencia</option>
+                            <option value="Workshop">Workshop</option>
+                            <option value="Seminario">Seminario</option>
+                            <option value="Social">Social</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Fecha desde:</label>
+                        <input type="datetime-local" id="eventDateFrom">
+                    </div>
+                    <div class="filter-group">
+                        <label>Fecha hasta:</label>
+                        <input type="datetime-local" id="eventDateTo">
+                    </div>
+                    <div class="filter-group">
+                        <label>&nbsp;</label>
+                        <button class="btn btn-primary" onclick="loadEvents()">🔍 Filtrar</button>
+                        <button class="btn btn-secondary" onclick="clearFilters()">❌ Limpiar</button>
+                    </div>
+                </div>
+
+                <!-- Crear evento -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">➕ Crear Nuevo Evento</div>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Título:</label>
+                            <input type="text" id="eventTitle" placeholder="Título del evento">
+                        </div>
+                        <div class="form-group">
+                            <label>Categoría:</label>
+                            <select id="newEventCategory">
+                                <option value="Conferencia">Conferencia</option>
+                                <option value="Workshop">Workshop</option>
+                                <option value="Seminario">Seminario</option>
+                                <option value="Social">Social</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Fecha y hora:</label>
+                            <input type="datetime-local" id="eventDate">
+                        </div>
+                        <div class="form-group">
+                            <label>Ubicación:</label>
+                            <input type="text" id="eventLocation" placeholder="Dirección del evento">
+                        </div>
+                        <div class="form-group">
+                            <label>Capacidad máxima:</label>
+                            <input type="number" id="eventCapacity" min="1" max="10000" placeholder="100">
+                        </div>
+                        <div class="form-group">
+                            <label>Precio (opcional):</label>
+                            <input type="number" id="eventPrice" min="0" step="0.01" placeholder="0.00">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Descripción:</label>
+                        <textarea id="eventDescription" rows="3" placeholder="Describe tu evento..."></textarea>
+                    </div>
+                    <button class="btn btn-success" onclick="createEvent()">✨ Crear Evento</button>
+                </div>
+
+                <!-- Lista de eventos -->
+                <div class="stats-grid" id="eventStats"></div>
+                <div id="eventsList"></div>
+            </div>
+        </div>
+
+        <!-- Tab de Chat -->
+        <div id="chatTab" class="tab-content">
+            <div class="section">
+                <h3>💬 Chat en Tiempo Real</h3>
+
+                <div class="form-group">
+                    <label>ID del Evento para chatear:</label>
+                    <input type="number" id="chatEventId" placeholder="1" value="1">
+                    <button class="btn btn-primary" onclick="joinEventChat()" id="joinChatBtn">🔗 Conectar al Chat</button>
+                    <button class="btn btn-danger" onclick="leaveEventChat()" id="leaveChatBtn" disabled>❌ Salir del Chat</button>
+                </div>
+
+                <div class="chat-container" id="chatContainer">
+                    <div class="chat-sidebar">
+                        <h4>📊 Info del Chat</h4>
+                        <div id="chatEventInfo" style="margin-bottom: 20px; padding: 10px; background: white; border-radius: 5px;"></div>
+
+                        <h5>👥 Usuarios Conectados (<span id="connectedCount">0</span>)</h5>
+                        <div id="connectedUsers"></div>
+
+                        <div id="chatStatus" class="status info" style="margin-top: 15px;"></div>
+                    </div>
+
+                    <div class="chat-main">
+                        <div class="chat-header" id="chatHeader">
+                            Selecciona un evento para comenzar a chatear
+                        </div>
+
+                        <div class="chat-messages" id="chatMessages">
+                            <div class="status info">💬 Los mensajes aparecerán aquí cuando te conectes al chat...</div>
+                        </div>
+
+                        <div id="typingIndicators"></div>
+
+                        <div class="chat-input">
+                            <div class="chat-input-group">
+                                <input type="text" id="messageInput" placeholder="Escribe tu mensaje..." disabled>
+                                <button class="btn btn-primary" onclick="sendMessage()" id="sendMessageBtn" disabled>📤 Enviar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab de Usuarios -->
+        <div id="usersTab" class="tab-content">
+            <div class="section">
+                <h3>👥 Gestión de Usuarios</h3>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">👤 Mi Perfil</div>
+                    </div>
+                    <div id="userProfile"></div>
+                    <button class="btn btn-primary" onclick="loadUserProfile()">🔄 Actualizar Perfil</button>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">📅 Mis Eventos</div>
+                    </div>
+                    <div id="myEvents"></div>
+                    <button class="btn btn-primary" onclick="loadMyEvents()">🔄 Cargar Mis Eventos</button>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">🎫 Mis Registros</div>
+                    </div>
+                    <div id="myRegistrations"></div>
+                    <button class="btn btn-primary" onclick="loadMyRegistrations()">🔄 Cargar Registros</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab de Admin -->
+        <div id="adminTab" class="tab-content">
+            <div class="section">
+                <h3>⚙️ Panel de Administración</h3>
+
+                <div class="stats-grid" id="adminStats"></div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">👥 Gestión de Usuarios</div>
+                    </div>
+                    <button class="btn btn-primary" onclick="loadAllUsers()">👥 Cargar Usuarios</button>
+                    <button class="btn btn-success" onclick="showCreateUserModal()">➕ Crear Usuario</button>
+                    <div id="allUsers"></div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">📊 Estadísticas del Sistema</div>
+                    </div>
+                    <button class="btn btn-primary" onclick="loadSystemStats()">📊 Cargar Estadísticas</button>
+                    <div id="systemStats"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para crear usuario -->
+    <div id="createUserModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeCreateUserModal()">&times;</span>
+            <h3>➕ Crear Nuevo Usuario</h3>
+            <div class="form-group">
+                <label>Nombre de usuario:</label>
+                <input type="text" id="adminNewUsername" placeholder="nombre_usuario">
+            </div>
+            <div class="form-group">
+                <label>Email:</label>
+                <input type="email" id="adminNewEmail" placeholder="usuario@ejemplo.com">
+            </div>
+            <div class="form-group">
+                <label>Contraseña:</label>
+                <input type="password" id="adminNewPassword" placeholder="Contraseña123!">
+            </div>
+            <div class="form-group">
+                <label>Rol:</label>
+                <select id="adminNewRole">
+                    <option value="Usuario">Usuario</option>
+                    <option value="Organizador">Organizador</option>
+                    <option value="Admin">Admin</option>
+                </select>
+            </div>
+            <button class="btn btn-success" onclick="createUserAsAdmin()">✨ Crear Usuario</button>
+            <button class="btn btn-secondary" onclick="closeCreateUserModal()">❌ Cancelar</button>
+        </div>
+    </div>
+
+    <!-- SignalR Client -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.min.js"></script>
+
+    <script>
+        // Variables globales
+        let connection = null;
+        let currentUser = null;
+        let currentEventId = null;
+        let jwtToken = null;
+        let typingTimer = null;
+        let isTyping = false;
+
+        // Configuración API
+        const API_BASE = 'http://localhost:5135/api'; // Ajusta según tu puerto
+        const HUB_URL = 'http://localhost:5135/chathub';
+
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log('🚀 EventManagement Test Page Loaded!');
+            setDefaultDateTime();
+            showStatus('info', 'Bienvenido al sistema de pruebas. Por favor, inicia sesión para comenzar.', 'authStatus');
+        });
+
+        // ===== FUNCIONES DE NAVEGACIÓN =====
+        function showTab(tabName) {
+            // Ocultar todas las tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Mostrar tab seleccionada
+            document.getElementById(tabName + 'Tab').classList.add('active');
+            event.target.classList.add('active');
+
+            // Cargar datos específicos de la tab
+            switch (tabName) {
+                case 'events':
+                    loadEvents();
+                    break;
+                case 'users':
+                    if (currentUser) loadUserProfile();
+                    break;
+                case 'admin':
+                    if (currentUser && currentUser.role === 'Admin') {
+                        loadSystemStats();
+                    }
+                    break;
+            }
+        }
+
+        // ===== FUNCIONES DE AUTENTICACIÓN =====
+        async function login() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            if (!email || !password) {
+                showStatus('error', 'Por favor completa todos los campos', 'authStatus');
+                return;
+            }
+
+            try {
+                showStatus('info', '⏳ Iniciando sesión...', 'authStatus');
+
+                const response = await fetch(`${API_BASE}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    currentUser = data.data.user;
+                    jwtToken = data.data.token;
+
+                    updateUserInfo();
+                    showStatus('success', `✅ ¡Bienvenido ${currentUser.username}! (${currentUser.role})`, 'authStatus');
+
+                    // Inicializar SignalR
+                    await initializeSignalR();
+
+                    // Cargar datos iniciales
+                    loadEvents();
+
+                } else {
+                    showStatus('error', `❌ ${data.message}`, 'authStatus');
+                }
+            } catch (error) {
+                console.error('Error login:', error);
+                showStatus('error', '❌ Error de conexión: ' + error.message, 'authStatus');
+            }
+        }
+
+        async function register() {
+            const username = document.getElementById('regUsername').value;
+            const email = document.getElementById('regEmail').value;
+            const password = document.getElementById('regPassword').value;
+            const confirmPassword = document.getElementById('regConfirmPassword').value;
+
+            if (!username || !email || !password || !confirmPassword) {
+                showStatus('error', 'Por favor completa todos los campos', 'authStatus');
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                showStatus('error', 'Las contraseñas no coinciden', 'authStatus');
+                return;
+            }
+
+            try {
+                showStatus('info', '⏳ Registrando usuario...', 'authStatus');
+
+                const response = await fetch(`${API_BASE}/auth/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, email, password, confirmPassword })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    currentUser = data.data.user;
+                    jwtToken = data.data.token;
+
+                    updateUserInfo();
+                    showStatus('success', `✅ ¡Registro exitoso! Bienvenido ${currentUser.username}!`, 'authStatus');
+
+                    // Limpiar formulario
+                    document.getElementById('regUsername').value = '';
+                    document.getElementById('regEmail').value = '';
+                    document.getElementById('regPassword').value = '';
+                    document.getElementById('regConfirmPassword').value = '';
+
+                    // Inicializar SignalR
+                    await initializeSignalR();
+
+                } else {
+                    const errors = data.errors || [data.message];
+                    showStatus('error', `❌ ${errors.join(', ')}`, 'authStatus');
+                }
+            } catch (error) {
+                console.error('Error register:', error);
+                showStatus('error', '❌ Error de conexión: ' + error.message, 'authStatus');
+            }
+        }
+
+        function logout() {
+            currentUser = null;
+            jwtToken = null;
+
+            if (connection) {
+                connection.stop();
+                connection = null;
+            }
+
+            updateUserInfo();
+            showStatus('info', '👋 Sesión cerrada exitosamente', 'authStatus');
+
+            // Limpiar contenido
+            document.getElementById('eventsList').innerHTML = '';
+            document.getElementById('chatMessages').innerHTML = '';
+            document.getElementById('userProfile').innerHTML = '';
+        }
+
+        function updateUserInfo() {
+            const userInfoDiv = document.getElementById('userInfo');
+            if (currentUser) {
+                userInfoDiv.innerHTML = `
+                        👤 <strong>${currentUser.username}</strong> (${currentUser.email}) |
+                        🏷️ Rol: <span class="badge badge-${currentUser.role.toLowerCase()}">${currentUser.role}</span> |
+                        🔗 Conectado
+                    `;
+            } else {
+                userInfoDiv.innerHTML = '❌ No autenticado';
+            }
+        }
+
+        // ===== FUNCIONES DE EVENTOS =====
+        async function loadEvents() {
+            if (!jwtToken) {
+                showStatus('warning', 'Debes iniciar sesión para ver eventos', 'eventsTab');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/events`, {
+                    headers: { 'Authorization': `Bearer ${jwtToken}` }
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    displayEvents(data.data);
+                    updateEventStats(data.data);
+                } else {
+                    showStatus('error', data.message, 'eventsTab');
+                }
+            } catch (error) {
+                console.error('Error loading events:', error);
+                showStatus('error', 'Error cargando eventos: ' + error.message, 'eventsTab');
+            }
+        }
+
+        async function createEvent() {
+            if (!jwtToken) {
+                showStatus('warning', 'Debes iniciar sesión', 'eventsTab');
+                return;
+            }
+
+            const title = document.getElementById('eventTitle').value;
+            const description = document.getElementById('eventDescription').value;
+            const date = document.getElementById('eventDate').value;
+            const location = document.getElementById('eventLocation').value;
+            const category = document.getElementById('newEventCategory').value;
+            const capacity = document.getElementById('eventCapacity').value;
+            const price = document.getElementById('eventPrice').value;
+
+            if (!title || !date) {
+                showStatus('error', 'Título y fecha son obligatorios', 'eventsTab');
+                return;
+            }
+
+            const eventData = {
+                title,
+                description,
+                date: new Date(date).toISOString(),
+                location,
+                category,
+                maxCapacity: capacity ? parseInt(capacity) : null,
+                price: price ? parseFloat(price) : null
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/events`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${jwtToken}`
+                    },
+                    body: JSON.stringify(eventData)
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showStatus('success', `✅ Evento "${title}" creado exitosamente!`, 'eventsTab');
+
+                    // Limpiar formulario
+                    document.getElementById('eventTitle').value = '';
+                    document.getElementById('eventDescription').value = '';
+                    document.getElementById('eventDate').value = '';
+                    document.getElementById('eventLocation').value = '';
+                    document.getElementById('eventCapacity').value = '';
+                    document.getElementById('eventPrice').value = '';
+
+                    // Recargar eventos
+                    loadEvents();
+                } else {
+                    const errors = data.errors || [data.message];
+                    showStatus('error', `❌ ${errors.join(', ')}`, 'eventsTab');
+                }
+            } catch (error) {
+                console.error('Error creating event:', error);
+                showStatus('error', '❌ Error creando evento: ' + error.message, 'eventsTab');
+            }
+        }
+
+        async function registerToEvent(eventId, eventTitle) {
+            if (!jwtToken) {
+                showStatus('warning', 'Debes iniciar sesión', 'eventsTab');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/events/${eventId}/register`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${jwtToken}` }
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showStatus('success', `✅ Te registraste exitosamente al evento "${eventTitle}"!`, 'eventsTab');
+                    loadEvents(); // Recargar para actualizar estado
+                } else {
+                    showStatus('error', `❌ ${data.message}`, 'eventsTab');
+                }
+            } catch (error) {
+                console.error('Error registering to event:', error);
+                showStatus('error', '❌ Error en registro: ' + error.message, 'eventsTab');
+            }
+        }
+
+        async function unregisterFromEvent(eventId, eventTitle) {
+            if (!jwtToken || !confirm(`¿Seguro que quieres cancelar tu registro al evento "${eventTitle}"?`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/events/${eventId}/register`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${jwtToken}` }
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showStatus('success', `✅ Registro cancelado del evento "${eventTitle}"`, 'eventsTab');
+                    loadEvents(); // Recargar para actualizar estado
+                } else {
+                    showStatus('error', `❌ ${data.message}`, 'eventsTab');
+                }
+            } catch (error) {
+                console.error('Error unregistering from event:', error);
+                showStatus('error', '❌ Error cancelando registro: ' + error.message, 'eventsTab');
+            }
+        }
+
+        function displayEvents(events) {
+            const eventsContainer = document.getElementById('eventsList');
+
+            if (!events || events.length === 0) {
+                eventsContainer.innerHTML = '<div class="status info">📅 No hay eventos disponibles</div>';
+                return;
+            }
+
+            const eventsHtml = events.map(event => {
+                const eventDate = new Date(event.date);
+                const isRegistered = event.isUserRegistered;
+                const isFull = event.maxCapacity && event.totalRegistrations >= event.maxCapacity;
+
+                return `
+                        <div class="event-card">
+                            <div class="event-title">${event.title}</div>
+                            <p style="color: #666; margin: 10px 0;">${event.description || 'Sin descripción'}</p>
+                            <div style="margin: 10px 0;">
+                                <span style="color: #667eea;">📅 ${eventDate.toLocaleString()}</span><br>
+                                ${event.location ? `<span style="color: #666;">📍 ${event.location}</span><br>` : ''}
+                                ${event.category ? `<span style="color: #666;">🏷️ ${event.category}</span><br>` : ''}
+                                ${event.price ? `<span style="color: #666;">💰 ${event.price}</span><br>` : ''}
+                            </div>
+                            <div class="event-info">
+                                <div class="event-capacity">
+                                    👥 ${event.totalRegistrations}${event.maxCapacity ? `/${event.maxCapacity}` : ''} registrados
+                                    ${isFull ? ' <span style="color: #dc3545;">(LLENO)</span>' : ''}
+                                </div>
+                                <div>
+                                    ${isRegistered
+                        ? `<button class="btn btn-danger" onclick="unregisterFromEvent(${event.id}, '${event.title}')">❌ Cancelar Registro</button>
+                                           <button class="btn btn-primary" onclick="document.getElementById('chatEventId').value=${event.id}; showTab('chat')">💬 Ir al Chat</button>`
+                        : `<button class="btn btn-success" onclick="registerToEvent(${event.id}, '${event.title}')" ${isFull ? 'disabled' : ''}>
+                                            ${isFull ? '🚫 Evento Lleno' : '✅ Registrarse'}
+                                           </button>`
+                    }
+                                    ${currentUser && (currentUser.role === 'Admin')
+                        ? `<button class="btn btn-danger" onclick="deleteEvent(${event.id}, '${event.title}')">🗑️ Eliminar</button>`
+                        : ''
+                    }
+                                </div>
+                            </div>
+                        </div>
+                    `;
+            }).join('');
+
+            eventsContainer.innerHTML = eventsHtml;
+        }
+
+        function updateEventStats(events) {
+            const statsContainer = document.getElementById('eventStats');
+            const totalEvents = events.length;
+            const upcomingEvents = events.filter(e => new Date(e.date) > new Date()).length;
+            const myRegistrations = events.filter(e => e.isUserRegistered).length;
+
+            statsContainer.innerHTML = `
+                    <div class="stat-card">
+                        <div class="stat-number">${totalEvents}</div>
+                        <div class="stat-label">Total Eventos</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">${upcomingEvents}</div>
+                        <div class="stat-label">Próximos Eventos</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">${myRegistrations}</div>
+                        <div class="stat-label">Mis Registros</div>
+                    </div>
+                `;
+        }
+
+        async function deleteEvent(eventId, eventTitle) {
+            if (!confirm(`¿Seguro que quieres eliminar el evento "${eventTitle}"? Esta acción no se puede deshacer.`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/events/${eventId}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${jwtToken}` }
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showStatus('success', `✅ Evento "${eventTitle}" eliminado exitosamente`, 'eventsTab');
+                    loadEvents(); // Recargar eventos
+                } else {
+                    showStatus('error', `❌ ${data.message}`, 'eventsTab');
+                }
+            } catch (error) {
+                console.error('Error deleting event:', error);
+                showStatus('error', '❌ Error eliminando evento: ' + error.message, 'eventsTab');
+            }
+        }
+
+        // ===== FUNCIONES DE SIGNALR Y CHAT =====
+        async function initializeSignalR() {
+            if (!jwtToken) return;
+
+            try {
+                connection = new signalR.HubConnectionBuilder()
+                    .withUrl(`${HUB_URL}?access_token=${jwtToken}`)
+                    .withAutomaticReconnect([0, 2000, 10000, 30000])
+                    .build();
+
+                // Event listeners
+                connection.on("JoinedChat", onJoinedChat);
+                connection.on("MessageReceived", onMessageReceived);
+                connection.on("UserJoined", onUserJoined);
+                connection.on("UserLeft", onUserLeft);
+                connection.on("UserStartedTyping", onUserStartedTyping);
+                connection.on("UserStoppedTyping", onUserStoppedTyping);
+                connection.on("ConnectedUsersUpdated", onConnectedUsersUpdated);
+                connection.on("MessageDeleted", onMessageDeleted);
+                connection.on("Error", onSignalRError);
+
+                await connection.start();
+
+                showStatus('success', '🔗 SignalR conectado exitosamente', 'chatStatus');
+                console.log('✅ SignalR connected');
+
+            } catch (error) {
+                showStatus('error', '❌ Error conectando SignalR: ' + error.message, 'chatStatus');
+                console.error('❌ SignalR connection error:', error);
+            }
+        }
+
+        async function joinEventChat() {
+            const eventId = parseInt(document.getElementById('chatEventId').value);
+
+            if (!eventId || !connection) {
+                showStatus('error', 'Por favor ingresa un ID de evento válido y asegúrate de estar conectado', 'chatStatus');
+                return;
+            }
+
+            try {
+                currentEventId = eventId;
+                await connection.invoke("JoinEventChat", eventId);
+
+                document.getElementById('joinChatBtn').disabled = true;
+                document.getElementById('leaveChatBtn').disabled = false;
+                document.getElementById('messageInput').disabled = false;
+                document.getElementById('sendMessageBtn').disabled = false;
+
+                showStatus('info', '⏳ Conectando al chat...', 'chatStatus');
+
+            } catch (error) {
+                showStatus('error', '❌ Error uniéndose al chat: ' + error.message, 'chatStatus');
+                console.error('Error joining chat:', error);
+            }
+        }
+
+        async function leaveEventChat() {
+            if (!currentEventId || !connection) return;
+
+            try {
+                await connection.invoke("LeaveEventChat", currentEventId);
+                currentEventId = null;
+
+                document.getElementById('joinChatBtn').disabled = false;
+                document.getElementById('leaveChatBtn').disabled = true;
+                document.getElementById('messageInput').disabled = true;
+                document.getElementById('sendMessageBtn').disabled = true;
+
+                // Limpiar chat
+                document.getElementById('chatMessages').innerHTML = '';
+                document.getElementById('connectedUsers').innerHTML = '';
+                document.getElementById('connectedCount').textContent = '0';
+                document.getElementById('chatHeader').textContent = 'Selecciona un evento para comenzar a chatear';
+
+                showStatus('info', '👋 Desconectado del chat', 'chatStatus');
+
+            } catch (error) {
+                console.error('Error leaving chat:', error);
+            }
+        }
+
+        async function sendMessage() {
+            const messageInput = document.getElementById('messageInput');
+            const content = messageInput.value.trim();
+
+            if (!content || !currentEventId || !connection) return;
+
+            try {
+                await connection.invoke("SendMessage", {
+                    eventId: currentEventId,
+                    content: content
+                });
+
+                messageInput.value = '';
+                stopTyping();
+
+            } catch (error) {
+                showStatus('error', '❌ Error enviando mensaje: ' + error.message, 'chatStatus');
+                console.error('Error sending message:', error);
+            }
+        }
+
+        async function deleteMessage(messageId) {
+            if (!confirm('¿Estás seguro de que quieres eliminar este mensaje?')) return;
+
+            try {
+                await connection.invoke("DeleteMessage", messageId);
+            } catch (error) {
+                showStatus('error', '❌ Error eliminando mensaje: ' + error.message, 'chatStatus');
+                console.error('Error deleting message:', error);
+            }
+        }
+
+        // Event handlers de SignalR
+        function onJoinedChat(chatRoom) {
+            document.getElementById('chatHeader').textContent = `💬 ${chatRoom.eventTitle}`;
+            document.getElementById('chatEventInfo').innerHTML = `
+                    <strong>📅 ${chatRoom.eventTitle}</strong><br>
+                    <small>Evento ID: ${chatRoom.eventId} | Usuarios: ${chatRoom.connectedUsersCount}</small>
+                `;
+
+            // Mostrar mensajes recientes
+            const messagesContainer = document.getElementById('chatMessages');
+            messagesContainer.innerHTML = '';
+            chatRoom.recentMessages.forEach(msg => displayMessage(msg));
+
+            showStatus('success', `✅ Conectado al chat "${chatRoom.eventTitle}"`, 'chatStatus');
+            scrollToBottom();
+        }
+
+        function onMessageReceived(message) {
+            displayMessage(message);
+            scrollToBottom();
+        }
+
+        function onUserJoined(data) {
+            showStatus('info', `👋 ${data.message}`, 'chatStatus');
+        }
+
+        function onUserLeft(data) {
+            showStatus('info', `👋 ${data.message}`, 'chatStatus');
+        }
+
+        function onUserStartedTyping(data) {
+            showTypingIndicator(data.userId, data.username);
+        }
+
+        function onUserStoppedTyping(data) {
+            hideTypingIndicator(data.userId);
+        }
+
+        function onConnectedUsersUpdated(users) {
+            const container = document.getElementById('connectedUsers');
+            const countElement = document.getElementById('connectedCount');
+
+            countElement.textContent = users.length;
+
+            container.innerHTML = users.map(user => `
+                    <div class="user-item">
+                        <strong>${user.username}</strong>
+                        <span class="badge badge-${user.role.toLowerCase()}">${user.role}</span>
+                        ${user.isTyping ? '<em style="color: #667eea;"> - escribiendo...</em>' : ''}
+                    </div>
+                `).join('');
+        }
+
+        function onMessageDeleted(messageId) {
+            const messageElement = document.querySelector(`[data-message-id="${messageId}"]`);
+            if (messageElement) {
+                messageElement.remove();
+            }
+        }
+
+        function onSignalRError(error) {
+            showStatus('error', '❌ ' + error, 'chatStatus');
+        }
+
+        function displayMessage(message) {
+            const container = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${message.userId === currentUser.id ? 'own' : 'other'}`;
+            messageDiv.setAttribute('data-message-id', message.id);
+
+            const time = new Date(message.sentAt).toLocaleTimeString();
+
+            messageDiv.innerHTML = `
+                    <div class="message-header">
+                        <strong>${message.username}</strong>
+                        <span class="badge badge-${message.userRole.toLowerCase()}">${message.userRole}</span>
+                        - ${time}
+                    </div>
+                    <div class="message-content">${escapeHtml(message.content)}</div>
+                    ${message.canDelete ? `<button style="position: absolute; top: 5px; right: 5px; background: #dc3545; color: white; border: none; border-radius: 3px; width: 20px; height: 20px; font-size: 10px; cursor: pointer;" onclick="deleteMessage(${message.id})">×</button>` : ''}
+                `;
+
+            container.appendChild(messageDiv);
+        }
+
+        function showTypingIndicator(userId, username) {
+            if (userId === currentUser.id) return;
+
+            const container = document.getElementById('typingIndicators');
+            let indicator = document.getElementById(`typing-${userId}`);
+
+            if (!indicator) {
+                indicator = document.createElement('div');
+                indicator.id = `typing-${userId}`;
+                indicator.className = 'typing-indicator';
+                container.appendChild(indicator);
+            }
+
+            indicator.textContent = `${username} está escribiendo...`;
+        }
+
+        function hideTypingIndicator(userId) {
+            const indicator = document.getElementById(`typing-${userId}`);
+            if (indicator) {
+                indicator.remove();
+            }
+        }
+
+        function startTyping() {
+            if (!isTyping && currentEventId && connection) {
+                isTyping = true;
+                connection.invoke("StartTyping", currentEventId).catch(console.error);
+            }
+
+            clearTimeout(typingTimer);
+            typingTimer = setTimeout(() => {
+                stopTyping();
+            }, 3000);
+        }
+
+        function stopTyping() {
+            if (isTyping && currentEventId && connection) {
+                isTyping = false;
+                connection.invoke("StopTyping", currentEventId).catch(console.error);
+            }
+            clearTimeout(typingTimer);
+        }
+
+        // ===== FUNCIONES DE USUARIOS =====
+        async function loadUserProfile() {
+            if (!jwtToken) return;
+
+            try {
+                // Simulamos obtener el perfil (puedes implementar endpoint específico)
+                const profileData = {
+                    id: currentUser.id,
+                    username: currentUser.username,
+                    email: currentUser.email,
+                    role: currentUser.role,
+                    totalEventsRegistered: 0,
+                    totalEventsCreated: 0
+                };
+
+                const profileHtml = `
+                        <div class="form-grid">
+                            <div><strong>ID:</strong> ${profileData.id}</div>
+                            <div><strong>Usuario:</strong> ${profileData.username}</div>
+                            <div><strong>Email:</strong> ${profileData.email}</div>
+                            <div><strong>Rol:</strong> <span class="badge badge-${profileData.role.toLowerCase()}">${profileData.role}</span></div>
+                        </div>
+                    `;
+
+                document.getElementById('userProfile').innerHTML = profileHtml;
+            } catch (error) {
+                console.error('Error loading profile:', error);
+            }
+        }
+
+        async function loadMyEvents() {
+            // Esta función cargaría eventos creados por el usuario actual
+            document.getElementById('myEvents').innerHTML = '<div class="status info">🔄 Función en desarrollo...</div>';
+        }
+
+        async function loadMyRegistrations() {
+            // Esta función cargaría registros del usuario actual
+            document.getElementById('myRegistrations').innerHTML = '<div class="status info">🔄 Función en desarrollo...</div>';
+        }
+
+        // ===== FUNCIONES DE ADMIN =====
+        async function loadSystemStats() {
+            if (!currentUser || currentUser.role !== 'Admin') {
+                showStatus('error', 'Solo administradores pueden acceder a estas estadísticas', 'adminTab');
+                return;
+            }
+
+            try {
+                // Simular estadísticas (puedes implementar endpoints específicos)
+                const stats = {
+                    totalUsers: 25,
+                    totalEvents: 12,
+                    totalRegistrations: 87,
+                    activeChats: 3
+                };
+
+                document.getElementById('adminStats').innerHTML = `
+                        <div class="stat-card">
+                            <div class="stat-number">${stats.totalUsers}</div>
+                            <div class="stat-label">Total Usuarios</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">${stats.totalEvents}</div>
+                            <div class="stat-label">Total Eventos</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">${stats.totalRegistrations}</div>
+                            <div class="stat-label">Total Registros</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">${stats.activeChats}</div>
+                            <div class="stat-label">Chats Activos</div>
+                        </div>
+                    `;
+
+                document.getElementById('systemStats').innerHTML = '<div class="status success">✅ Estadísticas cargadas (datos simulados)</div>';
+            } catch (error) {
+                console.error('Error loading stats:', error);
+                showStatus('error', 'Error cargando estadísticas: ' + error.message, 'adminTab');
+            }
+        }
+
+        async function loadAllUsers() {
+            if (!currentUser || currentUser.role !== 'Admin') {
+                showStatus('error', 'Solo administradores pueden ver usuarios', 'adminTab');
+                return;
+            }
+
+            document.getElementById('allUsers').innerHTML = '<div class="status info">🔄 Función de gestión de usuarios en desarrollo...</div>';
+        }
+
+        function showCreateUserModal() {
+            if (!currentUser || currentUser.role !== 'Admin') {
+                alert('Solo administradores pueden crear usuarios');
+                return;
+            }
+            document.getElementById('createUserModal').style.display = 'block';
+        }
+
+        function closeCreateUserModal() {
+            document.getElementById('createUserModal').style.display = 'none';
+        }
+
+        async function createUserAsAdmin() {
+            // Función para crear usuario como admin
+            closeCreateUserModal();
+            showStatus('info', '🔄 Función de creación de usuarios en desarrollo...', 'adminTab');
+        }
+
+        // ===== FUNCIONES AUXILIARES =====
+        function showStatus(type, message, containerId = 'authStatus') {
+            const statusDiv = document.getElementById(containerId);
+            if (statusDiv) {
+                statusDiv.className = `status ${type}`;
+                statusDiv.textContent = message;
+                statusDiv.style.display = 'block';
+
+                // Auto-hide después de 5 segundos para mensajes de éxito
+                if (type === 'success') {
+                    setTimeout(() => {
+                        statusDiv.style.display = 'none';
+                    }, 5000);
+                }
+            }
+        }
+
+        function setDefaultDateTime() {
+            // Establecer fecha por defecto para crear eventos (mañana a las 18:00)
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            tomorrow.setHours(18, 0, 0, 0);
+
+            const isoString = tomorrow.toISOString().slice(0, 16);
+            document.getElementById('eventDate').value = isoString;
+        }
+
+        function clearFilters() {
+            document.getElementById('eventSearch').value = '';
+            document.getElementById('eventCategory').value = '';
+            document.getElementById('eventDateFrom').value = '';
+            document.getElementById('eventDateTo').value = '';
+            loadEvents();
+        }
+
+        function scrollToBottom() {
+            const container = document.getElementById('chatMessages');
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // ===== EVENT LISTENERS =====
+        document.getElementById('messageInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            } else {
+                startTyping();
+            }
+        });
+
+        document.getElementById('loginPassword').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                login();
+            }
+        });
+
+        // Cerrar modal al hacer click fuera
+        window.onclick = function (event) {
+            const modal = document.getElementById('createUserModal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        // Limpiar al cerrar ventana
+        window.addEventListener('beforeunload', () => {
+            if (connection) {
+                connection.stop();
+            }
+        });
+
+        console.log('📝 Página de pruebas cargada completamente!');
+        console.log('🔧 Para probar:');
+        console.log('1. Inicia sesión o regístrate');
+        console.log('2. Crea eventos (si eres organizador/admin)');
+        console.log('3. Regístrate a eventos');
+        console.log('4. Prueba el chat en tiempo real');
+        console.log('5. Explora las funciones de administración');
+    </script>
+</body>
+</html>

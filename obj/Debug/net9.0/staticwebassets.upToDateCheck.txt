@@ -1,0 +1,2 @@
+wwwroot\chat-test.html
+E:\Proyectos\EventManagementAPI\EventManagementAPI\wwwroot\chat-test.html
